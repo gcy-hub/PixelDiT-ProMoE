@@ -1,0 +1,3 @@
+# Differentiable whole-image OCR branch for PixelDiT fine-tuning.
+# Install in the existing training environment; its PyTorch build is reused.
+openocr-python==0.1.5
