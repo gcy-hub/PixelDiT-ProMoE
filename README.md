@@ -25,6 +25,19 @@ payload includes labels as [image_key, class_id] pairs. class_id must be in
 }
 ~~~
 
+For the unprocessed ImageNet parquet shards, convert only the training shards
+to a new directory. The source directory is read only; the script prints
+progress, speed, and ETA.
+
+~~~bash
+python c2i/convert_imagenet_parquet_to_h5.py \
+  --parquet-dir ImageNet-1k/data \
+  --output-dir ImageNet-1k/imagenet256_h5 \
+  --workers 32
+~~~
+
+After an interruption, run the same command with `--resume`.
+
 ## Train
 
 On node01, activate the pixel environment and run one selected model:

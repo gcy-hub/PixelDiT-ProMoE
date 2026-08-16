@@ -85,7 +85,7 @@ data:
   train_dataset:
     class_path: src.data.CustomINH5Dataset
     init_args:
-      data_dir: /home/wangye/projects/ImageNet-1k
+      data_dir: ImageNet-1k/imagenet256_h5
   eval_dataset:
     class_path: src.data.ClassLabelRandomNDataset
     init_args:
