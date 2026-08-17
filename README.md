@@ -66,3 +66,24 @@ bash train_c2i.sh --num-gpus 4 --master-port 29501 \
   --config configs/pix256_promoe_b.yaml \
   --ckpt-path train_logs/exp_pixdit_promoe_b_imagenet256/last.ckpt
 ~~~
+
+## Inference
+
+Generate requested ImageNet classes from a checkpoint. `--config` must be the
+same ProMoE YAML used for that checkpoint. The JSON dictionary maps class IDs
+in `[0, 999]` to output counts; the script uses EMA weights by default.
+
+~~~bash
+python c2i/infer_c2i.py \
+  --checkpoint c2i/train_logs/exp_pixdit_promoe_xl_imagenet256/last.ckpt \
+  --config c2i/configs/pix256_promoe_xl.yaml \
+  --gpu-ids 0,1,2,3 \
+  --class-counts '{"0": 4, "207": 2}' \
+  --output-dir c2i/samples/promoe_xl
+~~~
+
+The output contains `class_0000/`, `class_0207/`, and `manifest.json`. Use
+`--num-steps`, `--guidance`, or `--batch-size` to override the YAML sampler
+settings. `--gpu-ids` starts one inference process per GPU and shows total
+progress, speed, and ETA. GPU IDs are indexed within `CUDA_VISIBLE_DEVICES`
+when it is set.
