@@ -106,6 +106,10 @@ class ReWriteRootDirCli(LightningCLI):
 
         if default_root_dir is None:
             default_root_dir = os.path.join(os.getcwd(), "workdirs")
+        elif not os.path.isabs(default_root_dir):
+            # Configs use ``./train_logs``. Resolve it from c2i/ rather than
+            # from whichever directory happened to launch train_c2i.sh.
+            default_root_dir = os.path.abspath(os.path.join(_PROJECT_ROOT, default_root_dir))
 
         dirname = ""
         for v, k in self._get(self.config, "tags", default={}).items():

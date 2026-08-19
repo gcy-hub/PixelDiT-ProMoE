@@ -27,6 +27,7 @@ trainer:
     - class_path: src.utils.CheckpointHook
       init_args:
         every_n_epochs: 1
+        save_on_train_epoch_end: true
         save_top_k: 0
         save_last: true
     - class_path: src.utils.SaveImagesHook
@@ -90,7 +91,8 @@ data:
     class_path: src.data.ClassLabelRandomNDataset
     init_args:
       num_classes: 1000
-      max_num_instances: 50000
+      conditions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]
+      max_num_instances: 100
       latent_shape: [3, 256, 256]
   pred_dataset:
     class_path: src.data.ClassLabelRandomNDataset
@@ -100,5 +102,6 @@ data:
       latent_shape: [3, 256, 256]
   train_batch_size: 2
   train_num_workers: 4
+  eval_batch_size: 100
   pred_batch_size: 2
   pred_num_workers: 1

@@ -25,7 +25,7 @@ source /home/wangye/anaconda3/etc/profile.d/conda.sh
 conda activate pixel
 cd ${C2I_ROOT}
 
-torchrun --nproc_per_node=4 main.py fit -c "${CONFIG}" --trainer.devices=4
+python -m torch.distributed.run --nproc_per_node=4 main.py fit -c "${CONFIG}" --trainer.devices=4
 
 RUN_DIR=${C2I_ROOT}/train_logs/exp_pixdit_promoe_xl_smoke
 CHECKPOINT=$(find "${RUN_DIR}" -maxdepth 1 -name '*.ckpt' -type f | sort | tail -n 1)
@@ -35,4 +35,4 @@ python tests/verify_promoe_checkpoint.py "${CHECKPOINT}"
 
 # Lightning restores the full module and optimizer state. Since max_steps is
 # still one, this verifies checkpoint loading without taking another step.
-torchrun --nproc_per_node=4 main.py fit -c "${CONFIG}" --trainer.devices=4 --ckpt_path="${CHECKPOINT}"
+python -m torch.distributed.run --nproc_per_node=4 main.py fit -c "${CONFIG}" --trainer.devices=4 --ckpt_path="${CHECKPOINT}"

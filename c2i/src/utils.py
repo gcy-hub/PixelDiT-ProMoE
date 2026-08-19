@@ -90,9 +90,18 @@ class CheckpointHook(ModelCheckpoint):
     """Save checkpoint with only the incremental part of the model."""
 
     def setup(self, trainer: Trainer, pl_module: LightningModule, stage: str) -> None:
+        # Keep the project-specific root-level layout (``last.ckpt`` directly
+        # under the run directory), while still letting Lightning initialize
+        # its filesystem and distributed checkpoint state.
         self.dirpath = trainer.default_root_dir
+        super().setup(trainer, pl_module, stage)
         self.exception_ckpt_path = os.path.join(self.dirpath, "on_exception.pt")
         pl_module.strict_loading = False
+        rank_zero_info(f"Rolling checkpoint path: {os.path.join(self.dirpath, 'last.ckpt')}")
+
+    def _save_checkpoint(self, trainer: Trainer, filepath: str) -> None:
+        super()._save_checkpoint(trainer, filepath)
+        rank_zero_info(f"Saved checkpoint: {filepath}")
 
     def on_save_checkpoint(
         self,
@@ -498,4 +507,3 @@ def record_metric(name: str, value: float):
     if profiler.enabled and profiler.step_count >= profiler.warmup_steps:
         profiler.timings[name].append(value)
         profiler.counts[name] += 1
-

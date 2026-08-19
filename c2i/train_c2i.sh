@@ -48,7 +48,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-echo "Starting distributed training with torchrun..."
+echo "Starting distributed training with the active Python environment..."
 if [[ "$CONFIG_FILE" != /* ]]; then
     CONFIG_FILE="$C2I_ROOT/$CONFIG_FILE"
 fi
@@ -57,7 +57,7 @@ echo "Config: $CONFIG_FILE"
 echo "Nodes: $NUM_NODES, GPUs per node: $NUM_GPUS"
 echo "Master: $MASTER_ADDR:$MASTER_PORT, Node rank: $NODE_RANK"
 
-CMD=(torchrun
+CMD=(python -m torch.distributed.run
     --nnodes="$NUM_NODES"
     --nproc_per_node="$NUM_GPUS"
     --master_addr="$MASTER_ADDR"

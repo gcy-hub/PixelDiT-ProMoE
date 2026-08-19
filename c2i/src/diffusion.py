@@ -389,8 +389,9 @@ def time_shift_fn(t, timeshift=1.0):
 class ProMoEFlowTrainer(BaseTrainer):
     """Flow matching for PixDiTProMoE without REPA feature alignment.
 
-    The linear scheduler interpolates image to noise, therefore its vector
-    field target is exactly ``noise - image``. The denoiser returns the sum of
+    The linear scheduler uses ``x_t = t * image + (1 - t) * noise`` and the
+    sampler integrates from ``t=0`` (noise) to ``t=1`` (image), so its vector
+    field target is exactly ``image - noise``. The denoiser returns the sum of
     RCL terms only when requested by this trainer.
     """
 
@@ -420,7 +421,8 @@ class ProMoEFlowTrainer(BaseTrainer):
         alpha = self.scheduler.alpha(t)
         sigma = self.scheduler.sigma(t)
         x_t = alpha * x + sigma * noise
-        target = noise - x
+        # d/dt [t * image + (1 - t) * noise] = image - noise.
+        target = x - noise
 
         prediction, rcl_loss = net(x_t, t, y, return_aux_loss=True)
         weight = self.loss_weight_fn(alpha, sigma)
