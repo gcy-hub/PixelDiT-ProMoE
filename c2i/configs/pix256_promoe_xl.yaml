@@ -9,25 +9,26 @@ trainer:
   default_root_dir: ./train_logs/
   accelerator: gpu
   strategy: ddp
-  devices: 4
+  devices: 8
   num_nodes: 1
   precision: bf16-mixed
   gradient_clip_val: 1.0
   gradient_clip_algorithm: norm
-  accumulate_grad_batches: 64
+  accumulate_grad_batches: 2
   logger: false
   num_sanity_val_steps: 0
   max_steps: 500000
-  val_check_interval: null
-  check_val_every_n_epoch: 1
+  # 1000 optimizer steps * 2 accumulated train batches per optimizer step.
+  val_check_interval: 2000
+  check_val_every_n_epoch: null
   log_every_n_steps: 10
   inference_mode: true
   use_distributed_sampler: false
   callbacks:
     - class_path: src.utils.CheckpointHook
       init_args:
-        every_n_epochs: 1
-        save_on_train_epoch_end: true
+        every_n_train_steps: 1000
+        save_on_train_epoch_end: false
         save_top_k: 0
         save_last: true
     - class_path: src.utils.SaveImagesHook
@@ -100,7 +101,7 @@ data:
       num_classes: 1000
       max_num_instances: 50000
       latent_shape: [3, 256, 256]
-  train_batch_size: 1
+  train_batch_size: 16
   train_num_workers: 4
   eval_batch_size: 100
   pred_batch_size: 1
